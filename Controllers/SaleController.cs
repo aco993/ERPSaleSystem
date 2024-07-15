@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ERPSalesSystem.Models;
+using ERPSalesSystem.Models.ViewModels;
 
 namespace ERPSalesSystem.Controllers
 {
@@ -210,8 +211,19 @@ namespace ERPSalesSystem.Controllers
 
         public async Task<IActionResult> Report()
         {
-            var sales = await _context.Sales.Include(s => s.Product).ToListAsync();
-            return View(sales);
+            //     var sales = await _context.Sales.Include(s => s.Product).ToListAsync();
+            //     return View(sales);
+            var salesReport = await _context.Sales
+         .GroupBy(s => new { s.ProductId, s.Product.Name })
+         .Select(g => new SalesReportViewModel
+         {
+             ProductId = g.Key.ProductId,
+             ProductName = g.Key.Name,
+             TotalQuantitySold = g.Sum(s => s.Quantity),
+             TotalRevenue = g.Sum(s => s.Quantity * s.Product.Price)
+         }).ToListAsync();
+
+            return View(salesReport);
         }
     }
 }

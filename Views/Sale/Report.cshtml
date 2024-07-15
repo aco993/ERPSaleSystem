@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ERPSalesSystem.Models.Sale>
+﻿@model IEnumerable<ERPSalesSystem.Models.ViewModels.SalesReportViewModel>
 
 @{
     ViewData["Title"] = "Sales Report";
@@ -6,21 +6,23 @@
 
 <h1>Sales Report</h1>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Date</th>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Total Quantity Sold</th>
+            <th>Total Revenue</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var sale in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@sale.Product.Name</td>
-                <td>@sale.Quantity</td>
-                <td>@sale.Date.ToShortDateString()</td>
+                <td>@item.ProductId</td>
+                <td>@item.ProductName</td>
+                <td>@item.TotalQuantitySold</td>
+                <td>@item.TotalRevenue.ToString("C")</td>
             </tr>
         }
     </tbody>
