@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ERPSalesSystem.Models;
 using ERPSalesSystem.Models.ViewModels;
+using OfficeOpenXml.Style;
+using OfficeOpenXml;
 
 namespace ERPSalesSystem.Controllers
 {
@@ -225,5 +227,54 @@ namespace ERPSalesSystem.Controllers
 
             return View(salesReport);
         }
+
+        public async Task<IActionResult> ExportToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // I had to put this line later
+
+            var sales = _context.Sales.Include(s => s.Product).ToList();
+
+            var salesReport = await _context.Sales
+.GroupBy(s => new { s.ProductId, s.Product.Name })
+.Select(g => new SalesReportViewModel
+{
+ ProductId = g.Key.ProductId,
+ ProductName = g.Key.Name,
+ TotalQuantitySold = g.Sum(s => s.Quantity),
+ TotalRevenue = g.Sum(s => s.Quantity * s.Product.Price)
+}).ToListAsync();
+
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Sales Report");
+
+                worksheet.Cells["A1"].Value = "Product ID";
+                worksheet.Cells["B1"].Value = "Product Name";
+                worksheet.Cells["C1"].Value = "Total Quantity Sold";
+                worksheet.Cells["D1"].Value = "Total Revenue";
+
+                int row = 2;
+                foreach (var item in salesReport)
+                {
+                    worksheet.Cells[row, 1].Value = item.ProductId;
+                    worksheet.Cells[row, 2].Value = item.ProductName;
+                    worksheet.Cells[row, 3].Value = item.TotalQuantitySold;
+                    worksheet.Cells[row, 4].Value = item.TotalRevenue;
+                    row++;
+                }
+
+                worksheet.Cells["A:Z"].AutoFitColumns();
+                worksheet.Cells["A1:D1"].Style.Font.Bold = true;
+                worksheet.Cells["A1:D1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells["A1:D1"].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
+
+                var stream = new MemoryStream();
+                package.SaveAs(stream);
+
+                var content = stream.ToArray();
+                return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "SalesReport.xlsx");
+            }
+        }
+
     }
 }
