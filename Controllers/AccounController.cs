@@ -4,16 +4,21 @@ using ERPSalesSystem.Models;
 using System.Threading.Tasks;
 using ERPSalesSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
+using System.Security.Policy;
+using System;
 
 public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ERPContext _context;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ERPContext context)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _context = context;
     }
 
     public async Task<IActionResult> UserList()
@@ -38,6 +43,17 @@ public class AccountController : Controller
 
             if (result.Succeeded)
             {
+                // Create UserProfile for the new user
+                var userProfile = new UserProfile
+                {
+                    UserId = user.Email,
+                    User = user // I ve did this to code work, because of foreign key
+               
+                     
+                };
+                _context.UserProfiles.Add(userProfile);
+                await _context.SaveChangesAsync();
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
@@ -62,14 +78,23 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
+            var user = await _userManager.FindByNameAsync(model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "User not found.");
+                return View(model);
+            }
+
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
-
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            }
         }
 
         return View(model);
@@ -81,4 +106,50 @@ public class AccountController : Controller
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
+
+    public IActionResult VerifyPasswordHash(string username, string password, [FromServices] ILogger<AccountController> logger)
+    {
+        var user = _userManager.FindByNameAsync(username).Result;
+        if (user == null)
+        {
+            return Content("User not found.");
+        }
+
+        var passwordHasher = new PasswordHasher<ApplicationUser>();
+        var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        logger.LogInformation($"Username: {username}\nEntered Password: {password}\nStored Password Hash: {user.PasswordHash}\nVerification Result: {verificationResult}");
+
+        if (verificationResult == PasswordVerificationResult.Success)
+        {
+            return Content("Password verification succeeded.");
+        }
+        else
+        {
+            return Content("Password verification failed.");
+        }
+    }
+
+public async Task<IActionResult> VerifyPassword(string username, string password)
+    {
+        var user = await _userManager.FindByNameAsync(username);
+        if (user == null)
+        {
+            return Content("User not found.");
+        }
+
+        var passwordHasher = new PasswordHasher<ApplicationUser>();
+        var verificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+        if (verificationResult == PasswordVerificationResult.Success)
+        {
+            return Content("Password verification succeeded.");
+        }
+        else
+        {
+            return Content("Password verification failed.");
+        }
+    }
+
 }
+

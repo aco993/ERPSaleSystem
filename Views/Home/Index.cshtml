@@ -2,6 +2,13 @@
     ViewData["Title"] = "Home Page";
 }
 
+@if (ViewBag.SuccessMessage != null)
+{
+    <div class="alert alert-success">
+        @ViewBag.SuccessMessage
+    </div>
+}
+
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-4">

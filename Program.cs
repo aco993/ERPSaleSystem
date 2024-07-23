@@ -22,6 +22,7 @@ public class Program {
 
         // Dodavanje Identity servisa
         builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddRoles<IdentityRole>() // Support for Roles
             .AddEntityFrameworkStores<ERPContext>();
 
         // Dodavanje MVC usluga
@@ -50,6 +51,9 @@ public class Program {
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
+        app.MapControllerRoute(
+    name: "categories",
+    pattern: "{controller=Categories}/{action=Index}/{id?}");
 
 
         app.Run();

@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
+      "Id": "C:\\Users\\Aco93\\source\\repos\\ERPSalesSystem\\ERPSalesSystem\\wwwroot\\data\\countries.json",
+      "PackagePath": "staticwebassets\\data\\countries.json"
+    },
+    {
       "Id": "C:\\Users\\Aco93\\source\\repos\\ERPSalesSystem\\ERPSalesSystem\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },

@@ -15,6 +15,7 @@ namespace ERPSalesSystem.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
             return View();
         }
 

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "o2g0XvHQNAiy04M4y0Q0yEvP7AJYAKFdYqOvJDc1UEs=",
+  "Hash": "FLtX4xI89ZVPOSxsxDi0MQ3W3uwwQgCGJwkKBAO/Mv0=",
   "Source": "ERPSalesSystem",
   "BasePath": "_content/ERPSalesSystem",
   "Mode": "Default",
@@ -1212,6 +1212,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\site.css"
+    },
+    {
+      "Identity": "C:\\Users\\Aco93\\source\\repos\\ERPSalesSystem\\ERPSalesSystem\\wwwroot\\data\\countries.json",
+      "SourceId": "ERPSalesSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Aco93\\source\\repos\\ERPSalesSystem\\ERPSalesSystem\\wwwroot\\",
+      "BasePath": "_content/ERPSalesSystem",
+      "RelativePath": "data/countries.json",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\data\\countries.json"
     },
     {
       "Identity": "C:\\Users\\Aco93\\source\\repos\\ERPSalesSystem\\ERPSalesSystem\\wwwroot\\favicon.ico",

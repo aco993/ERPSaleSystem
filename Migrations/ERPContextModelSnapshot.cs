@@ -87,6 +87,22 @@ namespace ERPSalesSystem.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ERPSalesSystem.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("ERPSalesSystem.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -133,6 +149,31 @@ namespace ERPSalesSystem.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Sales");
+                });
+
+            modelBuilder.Entity("ERPSalesSystem.Models.UserProfile", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UserProfiles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -283,6 +324,17 @@ namespace ERPSalesSystem.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ERPSalesSystem.Models.UserProfile", b =>
+                {
+                    b.HasOne("ERPSalesSystem.Models.ApplicationUser", "User")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("ERPSalesSystem.Models.UserProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -331,6 +383,12 @@ namespace ERPSalesSystem.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ERPSalesSystem.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("UserProfile")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
